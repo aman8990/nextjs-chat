@@ -19,9 +19,9 @@ function UsersList({ chat }) {
   const isActive = members.includes(otherUser?.email);
   const isActiveChat = `/chats/${chat.id}` === pathName;
 
-  useEffect(() => {
-    if (push) router.push(`/chats/${push}`);
-  }, [router, push]);
+  // useEffect(() => {
+  //   if (push) router.push(`/chats/${push}`);
+  // }, [router, push]);
 
   const image =
     chat.lastImage === null ? (
