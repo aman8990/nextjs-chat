@@ -4,6 +4,7 @@ import ChatForm from './_components/ChatForm';
 import ChatHeader from './_components/ChatHeader';
 import getMessages from '@/app/_actions/getMessages';
 import EmptyState from '@/app/_components/EmptyState';
+import NoChat from '@/app/_components/NoChat';
 
 async function Page({ params }) {
   const { chatId } = await params;
@@ -11,13 +12,7 @@ async function Page({ params }) {
   const messages = await getMessages(chatId);
 
   if (!chat) {
-    return (
-      <div className="lg:pl-80 h-full">
-        <div className="h-full flex flex-col">
-          <EmptyState />
-        </div>
-      </div>
-    );
+    return <NoChat />;
   }
 
   return (
