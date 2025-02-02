@@ -7,46 +7,72 @@ import useChat from '@/app/_hooks/useChat';
 import axios from 'axios';
 import useOtherUser from '@/app/_hooks/useOtherUser';
 import SpinnerMini from '@/app/_components/SpinnerMini';
+import useMessageStore from '@/app/_hooks/useMessageStore';
 
 function ChatBody({ initialMessages = [], chat }) {
   const otherUser = useOtherUser(chat);
-  const [messages, setMessages] = useState(initialMessages);
+  const {
+    messages = [],
+    setMessages,
+    addMessage,
+    updateSeenMessages,
+    addOldMessages,
+  } = useMessageStore();
+
   const { chatId } = useChat();
   const bottomRef = useRef(null);
-  const topRef = useRef(null);
+  const chatContainerRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialMessages.length === 15);
 
+  const scrollToBottom = () => {
+    requestAnimationFrame(() => {
+      if (bottomRef.current) {
+        bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  };
+
+  const handleScroll = async () => {
+    const container = chatContainerRef.current;
+    if (!container || loading || !hasMore) return;
+
+    const isAtTop = container.scrollTop === 0;
+    if (isAtTop) {
+      const previousHeight = container.scrollHeight;
+      await loadOlderMessages();
+
+      requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight - previousHeight;
+      });
+    }
+  };
+
   useEffect(() => {
+    setMessages(initialMessages);
     axios.post(`/api/chats/${chatId}/seen`);
-  }, [chatId]);
+
+    setTimeout(scrollToBottom, 100);
+  }, [chatId, initialMessages, setMessages]);
 
   useEffect(() => {
     const channel = pusherClient.subscribe(`chat-${chatId}`);
     bottomRef?.current?.scrollIntoView();
 
-    const handleNewMessage = async (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    const handleNewMessage = (newMessage) => {
+      if (newMessage?.senderId === otherUser?.id) {
+        addMessage(newMessage);
+      } else {
+        return;
+      }
+      axios.post(`/api/chats/${chatId}/seen`);
 
-      await axios.post(`/api/chats/${chatId}/seen`);
-
-      bottomRef?.current?.scrollIntoView();
+      scrollToBottom();
     };
 
     const handleSeenUpdate = (data) => {
-      setMessages((prevMessages) =>
-        prevMessages.map((message) =>
-          data.messages.some((msg) => msg.id === message.id)
-            ? {
-                ...message,
-                seenIds: data.messages.find((msg) => msg.id === message.id)
-                  .seenIds,
-              }
-            : message
-        )
-      );
-
-      bottomRef?.current?.scrollIntoView();
+      updateSeenMessages(data);
+      scrollToBottom();
     };
 
     channel.bind('new-message', handleNewMessage);
@@ -57,13 +83,14 @@ function ChatBody({ initialMessages = [], chat }) {
       channel.unbind('message-seen', handleSeenUpdate);
       pusherClient.unsubscribe(`chat-${chatId}`);
     };
-  }, [chatId]);
+  }, [chatId, otherUser?.id, addMessage, setMessages, updateSeenMessages]);
 
   const loadOlderMessages = useCallback(async () => {
-    if (!hasMore || loading) return;
+    if (!hasMore || loading || messages.length === 0) return;
 
     setLoading(true);
     const oldestMessage = messages[0];
+    console.log(oldestMessage);
     const cursor = oldestMessage?.id;
 
     try {
@@ -76,39 +103,25 @@ function ChatBody({ initialMessages = [], chat }) {
         setHasMore(false);
       }
 
-      setMessages((prevMessages) => [...olderMessages, ...prevMessages]);
+      addOldMessages(olderMessages);
     } catch (error) {
       console.error('Error fetching older messages', error);
     } finally {
       setLoading(false);
     }
-  }, [messages, chatId, hasMore, loading]);
-
-  useEffect(() => {
-    const topElement = topRef.current;
-    if (!topElement) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          loadOlderMessages();
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    observer.observe(topElement);
-    return () => observer.disconnect();
-  }, [loadOlderMessages]);
+  }, [messages, chatId, hasMore, loading, addOldMessages]);
 
   return (
-    <div className="flex-1 overflow-y-scroll scrollbar-none pt-10 lg:pt-5 pb-52 lg:pb-10">
+    <div
+      className="flex-1 overflow-y-scroll scrollbar-none pt-10 lg:pt-5 pb-52 lg:pb-10"
+      ref={chatContainerRef}
+      onScroll={handleScroll}
+    >
       {loading && (
         <div className="flex justify-center">
           <SpinnerMini />
         </div>
       )}
-      <div ref={topRef} />
       {messages?.map((message, i) => (
         <MessageBox
           isLast={i === messages.length - 1}
@@ -117,7 +130,7 @@ function ChatBody({ initialMessages = [], chat }) {
           otherUserId={otherUser?.id}
         />
       ))}
-      <div className="pt-20" ref={bottomRef} />
+      <div className="lg:pt-20" ref={bottomRef} />
     </div>
   );
 }

@@ -1,19 +1,23 @@
 'use client';
 
 import Input from '@/app/_components/Input';
-import { HiPaperAirplane, HiPhoto } from 'react-icons/hi2';
+import { HiPaperAirplane } from 'react-icons/hi2';
 import { useForm } from 'react-hook-form';
 import useChat from '@/app/_hooks/useChat';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import SpinnerMini from '@/app/_components/SpinnerMini';
-import { CldUploadButton } from 'next-cloudinary';
+import { v4 as uuidv4 } from 'uuid';
+import useMessageStore from '@/app/_hooks/useMessageStore';
+import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 function ChatForm() {
+  const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const { chatId } = useChat();
+  const { addMessage, updateMessage } = useMessageStore();
 
   const {
     register,
@@ -26,60 +30,34 @@ function ChatForm() {
     },
   });
 
+  const userEmail = useMemo(() => {
+    return session?.data?.user?.email;
+  }, [session?.data?.user?.email]);
+
   const onSubmit = async (data) => {
-    try {
-      setIsLoading(true);
+    const tempId = uuidv4();
+    const tempMessage = {
+      id: tempId,
+      content: data.message,
+      sender: { email: userEmail },
+      seenIds: [],
+      createdAt: new Date().toISOString(),
+    };
 
-      await axios.post('/api/messages', { ...data, chatId });
-      setValue('message', '', { shouldValidate: true });
+    addMessage(tempMessage);
+    setValue('message', '', { shouldValidate: true });
+
+    try {
+      const response = await axios.post('/api/messages', { ...data, chatId });
+      updateMessage(tempId, response.data);
     } catch (error) {
       toast.dismiss();
-      toast.error('Error in Sending Message');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleUpload = async (result) => {
-    try {
-      setIsLoading(true);
-
-      await axios.post('/api/messages', {
-        image: result?.info?.secure_url,
-        chatId,
-      });
-    } catch (error) {
-      toast.dismiss();
-      toast.error('Something went wrong');
-    } finally {
-      setIsLoading(false);
+      toast.error('Message Failed');
     }
   };
 
   return (
     <div className="flex items-center px-4 gap-2 fixed bottom-0 lg:relative py-5 bg-primary-950 border-t-4 border-primary-900 w-full">
-      <CldUploadButton
-        options={{
-          maxFiles: 1,
-          styles: {
-            palette: {
-              window: '#0A0D14',
-              sourceBg: '#0A0D14',
-              text: '#fff',
-              link: '#fff',
-              action: '#fff',
-              inProgress: '#aaa',
-              complete: '#222',
-              error: '#ff0000',
-            },
-          },
-        }}
-        onSuccess={handleUpload}
-        uploadPreset="aaart7sl"
-      >
-        <HiPhoto size={40} className="text-accent-1000" />
-      </CldUploadButton>
-
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex items-center w-full gap-2"
@@ -112,5 +90,4 @@ function ChatForm() {
   );
 }
 
-// export default ChatForm;
 export default dynamic(() => Promise.resolve(ChatForm), { ssr: false });

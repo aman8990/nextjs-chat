@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { IoCheckmarkDoneSharp } from 'react-icons/io5';
 import { useSession } from 'next-auth/react';
+import { IoIosTime } from 'react-icons/io';
 
 function MessageBox({ data, otherUserId }) {
   const session = useSession();
@@ -13,6 +14,11 @@ function MessageBox({ data, otherUserId }) {
   const [modalImage, setModalImage] = useState(null);
   const isOwn = session?.data?.user?.email === data.sender.email;
   const isSeen = data.seenIds.includes(otherUserId);
+
+  const isValidObjectId = (id) => {
+    const objectIdRegex = /^[a-f\d]{24}$/i;
+    return objectIdRegex.test(id);
+  };
 
   const message = `min-w-20 rounded-xl ${
     isOwn
@@ -52,10 +58,14 @@ function MessageBox({ data, otherUserId }) {
                 <span>{format(new Date(data.createdAt), 'p')}</span>
                 {isOwn && (
                   <span>
-                    {isSeen ? (
-                      <IoCheckmarkDoneSharp size={15} color="#0A0D14" />
+                    {isValidObjectId(data.id) ? (
+                      isSeen ? (
+                        <IoCheckmarkDoneSharp size={15} color="#0A0D14" />
+                      ) : (
+                        <IoCheckmarkDoneSharp size={15} />
+                      )
                     ) : (
-                      <IoCheckmarkDoneSharp size={15} />
+                      <IoIosTime size={15} />
                     )}
                   </span>
                 )}
