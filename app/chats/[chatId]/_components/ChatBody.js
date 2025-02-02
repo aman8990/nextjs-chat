@@ -109,7 +109,7 @@ function ChatBody({ initialMessages = [], chat }) {
         </div>
       )}
       <div ref={topRef} />
-      {messages.map((message, i) => (
+      {messages?.map((message, i) => (
         <MessageBox
           isLast={i === messages.length - 1}
           key={message.id}
