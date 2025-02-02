@@ -71,7 +71,7 @@ function UsersList({ chat }) {
             {otherUser?.name}
           </h1>
           <h1 className="text-xs ml-auto text-accent-1000">
-            {format(new Date(chat?.lastMessageAt), 'p')}
+            {chat?.lastMessageAt && format(new Date(chat?.lastMessageAt), 'p')}
           </h1>
         </div>
 
