@@ -77,9 +77,9 @@ function UsersList({ chat }) {
 
         <div className="flex items-center w-full">
           <h1 className="text-sm text-gray-500">{message || image}</h1>
-          {chat?._count.messages !== 0 && (
+          {chat?._count?.messages !== 0 && (
             <h1 className="text-sm bg-accent-1000 px-3 py-1 rounded-full text-white ml-auto">
-              {chat?._count.messages}
+              {chat?._count?.messages}
             </h1>
           )}
         </div>
