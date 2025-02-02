@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { IoCheckmarkDoneSharp } from 'react-icons/io5';
 import { useSession } from 'next-auth/react';
 import { IoIosTime } from 'react-icons/io';
+import { ImCross } from 'react-icons/im';
 
 function MessageBox({ data, otherUserId }) {
   const session = useSession();
@@ -58,12 +59,13 @@ function MessageBox({ data, otherUserId }) {
                 <span>{format(new Date(data.createdAt), 'p')}</span>
                 {isOwn && (
                   <span>
-                    {isValidObjectId(data.id) ? (
-                      isSeen ? (
-                        <IoCheckmarkDoneSharp size={15} color="#0A0D14" />
-                      ) : (
-                        <IoCheckmarkDoneSharp size={15} />
-                      )
+                    {data?.messageStatus === 'failed' ? (
+                      <ImCross size={15} color="#7C0A02" />
+                    ) : isValidObjectId(data.id) ? (
+                      <IoCheckmarkDoneSharp
+                        size={15}
+                        color={isSeen ? '#0A0D14' : undefined}
+                      />
                     ) : (
                       <IoIosTime size={15} />
                     )}

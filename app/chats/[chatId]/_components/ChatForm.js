@@ -38,10 +38,15 @@ function ChatForm() {
     const tempId = uuidv4();
     const tempMessage = {
       id: tempId,
-      content: data.message,
+      body: data.message,
       sender: { email: userEmail },
       seenIds: [],
       createdAt: new Date().toISOString(),
+    };
+
+    const failedMessage = {
+      ...tempMessage,
+      messageStatus: 'failed',
     };
 
     addMessage(tempMessage);
@@ -51,6 +56,7 @@ function ChatForm() {
       const response = await axios.post('/api/messages', { ...data, chatId });
       updateMessage(tempId, response.data);
     } catch (error) {
+      updateMessage(tempId, failedMessage);
       toast.dismiss();
       toast.error('Message Failed');
     }
