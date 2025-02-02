@@ -24,7 +24,7 @@ function UsersList({ chat }) {
   }, [router, push]);
 
   const image =
-    chat.lastImage === null ? (
+    chat?.lastImage === null ? (
       ''
     ) : (
       <div className="flex items-center justify-center gap-1">
@@ -36,11 +36,11 @@ function UsersList({ chat }) {
     );
 
   const message =
-    chat.lastMessage === null && chat.lastImage === null
+    (chat?.lastMessage === null || undefined) && chat?.lastImage === null
       ? 'Started a chat'
-      : chat.lastMessage?.length > 30
-      ? chat.lastMessage.slice(0, 30) + '...'
-      : chat.lastMessage;
+      : chat?.lastMessage?.length > 30
+      ? chat?.lastMessage.slice(0, 30) + '...'
+      : chat?.lastMessage;
 
   return (
     <button
@@ -58,7 +58,7 @@ function UsersList({ chat }) {
         </span>
       )}
       <Image
-        src={otherUser.image || '/default.jpg'}
+        src={otherUser?.image || '/default.jpg'}
         width={200}
         height={200}
         alt="user-image"
@@ -68,18 +68,18 @@ function UsersList({ chat }) {
       <div className="flex flex-col items-start w-full">
         <div className="flex items-center w-full gap-1">
           <h1 className="text-xl font-medium truncate max-w-[16ch] sm:max-w-[20ch] lg:max-w-[12ch]">
-            {otherUser.name}
+            {otherUser?.name}
           </h1>
           <h1 className="text-xs ml-auto text-accent-1000">
-            {format(new Date(chat.lastMessageAt), 'p')}
+            {format(new Date(chat?.lastMessageAt), 'p')}
           </h1>
         </div>
 
         <div className="flex items-center w-full">
           <h1 className="text-sm text-gray-500">{message || image}</h1>
-          {chat._count.messages !== 0 && (
+          {chat?._count.messages !== 0 && (
             <h1 className="text-sm bg-accent-1000 px-3 py-1 rounded-full text-white ml-auto">
-              {chat._count.messages}
+              {chat?._count.messages}
             </h1>
           )}
         </div>
