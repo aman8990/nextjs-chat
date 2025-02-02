@@ -58,13 +58,13 @@ function UserBox({ initialChats }) {
         isOpen ? 'hidden lg:flex' : 'block'
       }`}
     >
-      <div className="bg-primary-950 fixed w-full lg:w-[19.8rem]">
-        <h1 className="ml-5 mt-10 mb-2 md:mb-5 text-2xl font-semibold text-accent-1000">
+      <div className="bg-primary-950 fixed top-10 lg:top-12 z-10 w-full lg:w-[20.7rem]">
+        <h1 className="ml-5 mt-8 md:mt-10 mb-4 md:mb-5 text-2xl font-semibold text-accent-1000">
           Chats
         </h1>
       </div>
       <div className="overflow-y-scroll scrollbar-none md:mb-5">
-        <div className="flex items-center flex-col mt-28 mb-52 lg:mb-10 space-y-3 mx-2">
+        <div className="flex items-center flex-col mt-[5rem] lg:mt-[5.8rem] mb-52 lg:mb-10 space-y-3 mx-2">
           {chats.map((chat) => (
             <UsersList key={chat.id} chat={chat} />
           ))}

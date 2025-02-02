@@ -45,16 +45,16 @@ function UsersList({ chat }) {
   return (
     <button
       onClick={() => router.push(`/chats/${chat.id}`)}
-      className={`flex items-center px-4 sm:px-10 lg:px-4 gap-3 cursor-pointer hover:bg-primary-900 hover:rounded-full py-2 w-full ${
+      className={`flex items-center px-4 sm:px-10 lg:px-4 gap-3 cursor-pointer hover:bg-primary-900 hover:rounded-full py-2 w-full relative ${
         isActiveChat ? 'bg-primary-900 rounded-full' : ''
       }`}
     >
       {isActive && (
         <span
-          className="fixed ml-[2.4rem] mt-[-2rem] ring-1
-        ring-white rounded-full bg-red-600"
+          className="absolute ml-[2.4rem] mt-[2rem] ring-1
+        ring-white rounded-full bg-red-500"
         >
-          <GoDotFill color="rgb(220 38 38)" />
+          <GoDotFill size={15} color="white" />
         </span>
       )}
       <Image

@@ -8,6 +8,7 @@ import axios from 'axios';
 import useOtherUser from '@/app/_hooks/useOtherUser';
 import SpinnerMini from '@/app/_components/SpinnerMini';
 import useMessageStore from '@/app/_hooks/useMessageStore';
+import toast from 'react-hot-toast';
 
 function ChatBody({ initialMessages = [], chat }) {
   const otherUser = useOtherUser(chat);
@@ -57,17 +58,16 @@ function ChatBody({ initialMessages = [], chat }) {
 
   useEffect(() => {
     const channel = pusherClient.subscribe(`chat-${chatId}`);
-    bottomRef?.current?.scrollIntoView();
+    scrollToBottom();
 
     const handleNewMessage = (newMessage) => {
       if (newMessage?.senderId === otherUser?.id) {
         addMessage(newMessage);
+        scrollToBottom();
       } else {
-        return;
+        scrollToBottom();
       }
       axios.post(`/api/chats/${chatId}/seen`);
-
-      scrollToBottom();
     };
 
     const handleSeenUpdate = (data) => {
@@ -90,7 +90,6 @@ function ChatBody({ initialMessages = [], chat }) {
 
     setLoading(true);
     const oldestMessage = messages[0];
-    console.log(oldestMessage);
     const cursor = oldestMessage?.id;
 
     try {
@@ -105,7 +104,8 @@ function ChatBody({ initialMessages = [], chat }) {
 
       addOldMessages(olderMessages);
     } catch (error) {
-      console.error('Error fetching older messages', error);
+      toast.dismiss();
+      toast.error('Error in Loading Messages...');
     } finally {
       setLoading(false);
     }

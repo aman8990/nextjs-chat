@@ -35,13 +35,12 @@ function ProfileDrawer({ isOpen, setDrawerOpen, drawerRef, otherUser }) {
           />
           <div className="text-center">
             <h1 className="text-xl">{otherUser?.name}</h1>
-            <h1 className="text-sm text-gray-500">Offline</h1>
           </div>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="flex flex-col items-center mt-10"
+          className="flex flex-col items-center mt-8"
         >
           <IoTrash size={40} className="bg-red-600 p-2 rounded-full" />
           <h1 className="text-center mt-2">Delete</h1>
