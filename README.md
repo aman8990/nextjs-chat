@@ -2,9 +2,15 @@
 
 A full-featured real-time chat application built with Next.js 15, enabling smooth one-to-one messaging with authentication, image uploads, notifications, and real-time updates using Pusher.
 
+
+
+
 ## 🚀 Live Demo
 
 🔗 [Live Site](https://nextjs-chat-rho-gules-14.vercel.app/)  
+
+
+
 
 ## 🧩 Features
 
@@ -18,6 +24,9 @@ A full-featured real-time chat application built with Next.js 15, enabling smoot
 - 🌐 Responsive design using Tailwind CSS
 - 🧪 Form validation via React Hook Form
 - 🔒 Route protection using NextAuth and middleware
+
+
+
 
 ## 🛠️ Tech Stack
 
