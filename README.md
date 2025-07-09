@@ -78,3 +78,57 @@ project/
     ├── globals.css        # Global Tailwind styles
     └── not-found.js       # Custom 404 error page
 ```
+
+
+# 🧪 Getting Started
+
+Follow these steps to set up the project locally.
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/aman8990/nextjs-chat.git
+cd nextjs-chat
+```
+
+## 2. Install Dependencies
+
+```bash
+npm install
+```
+
+## 3. Set Up Environment Variables
+
+```bash
+DATABASE_URL=mongodb+srv://<username>:<password>@cluster.mongodb.net/dbname
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
+
+GITHUB_ID=your_github_client_id
+GITHUB_SECRET=your_github_client_secret
+
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+EMAIL_USERNAME=your_name@service.com
+EMAIL_PASSWORD=your_password
+EMAIL_FROM=your_email@gmail.com
+
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+
+NEXT_PUBLIC_PUSHER_APP_KEY=your_pusher_key
+PUSHER_APP_ID=your_pusher_app_id
+PUSHER_SECRET=your_pusher_secret
+```
+
+## 4. Generate Prisma Client
+
+```bash
+npx prisma generate
+```
+
+## 5. Start Development Server
+
+```bash
+npm run dev
+```
