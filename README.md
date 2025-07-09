@@ -19,8 +19,6 @@ A full-featured real-time chat application built with Next.js 15, enabling smoot
 - 🧪 Form validation via React Hook Form
 - 🔒 Route protection using NextAuth and middleware
 
----
-
 ## 🛠️ Tech Stack
 
 ### Frontend:
