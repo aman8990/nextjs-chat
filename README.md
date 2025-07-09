@@ -50,3 +50,31 @@ A full-featured real-time chat application built with Next.js 15, enabling smoot
   - Github oAuth
   - Email & Password login
 - **@next-auth/prisma-adapter – Database integration**
+
+---
+
+## 📂 Project Structure
+
+```bash
+project/
+  ├── middleware.js        # Middleware for route protection (auth guard)
+  ├── prisma/
+  │   └── schema.prisma    # Prisma schema for MongoDB
+
+  app/
+    ├── api/               # API endpoints (auth, chats, pusher etc.)
+    ├── _actions/          # Next.js Server Actions (getChats, getChatById, getMessages etc.)
+    ├── _context/          # React Contexts (e.g. Auth context, Toast context)
+    ├── _components/       # Reusable UI components (buttons, input, header etc.)
+    ├── _utils/            # Utility/helper functions
+    ├── _hooks/            # Custom hooks (useActiveList, useActiveChannel, useMessageStore etc.)
+    ├── _libs/             # Core libraries (prismadb, emailSender, pusher)
+    ├── (site)/            # Login page
+    ├── account/           # User account info and settings
+    ├── search/            # Search other users
+    ├── chats/             # Chats listing route
+    │   └── [chatId]/      # Dynamic chat details page
+    ├── layout.js          # Root layout for the app
+    ├── globals.css        # Global Tailwind styles
+    └── not-found.js       # Custom 404 error page
+```
